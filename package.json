@@ -1,0 +1,46 @@
+{
+	"name": "@s77rt/react-native-contacts",
+	"version": "0.0.1",
+	"description": "A React Native module to get contacts.",
+	"react-native": "js/index",
+	"source": "js/index",
+	"main": "js/index",
+	"files": [
+		"js",
+		"android",
+		"ios",
+		"react-native-contacts.podspec",
+		"!android/build",
+		"!ios/build",
+		"!**/__tests__",
+		"!**/__fixtures__",
+		"!**/__mocks__"
+	],
+	"keywords": [
+		"react-native",
+		"contacts"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/s77rt/react-native-contacts.git"
+	},
+	"author": "Abdelhafidh Belalia <admin@abdelhafidh.com> (https://github.com/s77rt)",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/s77rt/react-native-contacts/issues"
+	},
+	"homepage": "https://github.com/s77rt/react-native-contacts#readme",
+	"devDependencies": {},
+	"peerDependencies": {
+		"react": "*",
+		"react-native": "*"
+	},
+	"codegenConfig": {
+		"name": "RTNContactsSpec",
+		"type": "modules",
+		"jsSrcsDir": "js",
+		"android": {
+			"javaPackageName": "com.rtncontacts"
+		}
+	}
+}
