@@ -59,9 +59,9 @@ Contacts.getAll()
 
 ## Methods
 
-|   Name   | Arguments |                   Description                    |
-| :------: | :-------: | :----------------------------------------------: |
-| `getAll` |           | Get all contacts. Returns a `Promise<Contacts>`. |
+|   Name   | Arguments |                    Description                    |
+| :------: | :-------: | :-----------------------------------------------: |
+| `getAll` |           | Get all contacts. Returns a `Promise<Contact[]>`. |
 
 ## License
 

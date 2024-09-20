@@ -1,8 +1,8 @@
 import { TurboModule, TurboModuleRegistry } from "react-native";
-import type { Contacts } from "./types";
+import type { Contact } from "./types";
 
 export interface Spec extends TurboModule {
-	getAll(): Promise<Contacts>;
+	getAll(): Promise<Contact[]>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>("RTNContacts");

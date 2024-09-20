@@ -25,6 +25,7 @@ RCT_EXPORT_MODULE()
                                  *stop = YES;
                                  return;
                                }
+
                                NSMutableArray *phoneNumbers =
                                    [NSMutableArray array];
                                for (CNLabeledValue<CNPhoneNumber *>
