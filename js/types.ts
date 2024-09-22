@@ -1,3 +1,5 @@
+export type NonEmptyArray<T> = [T, ...T[]];
+
 type LabeledValue = {
 	label: string;
 	value: string;

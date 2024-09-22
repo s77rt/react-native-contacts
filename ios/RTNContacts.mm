@@ -5,14 +5,36 @@
 @implementation RTNContacts
 
 RCT_EXPORT_MODULE()
-- (void)getAll:(RCTPromiseResolveBlock)resolve
+
+- (void)getAll:(NSArray *)keys
+       resolve:(RCTPromiseResolveBlock)resolve
         reject:(RCTPromiseRejectBlock)reject {
+  BOOL shouldFetchGivenName = NO;
+  BOOL shouldFetchFamilyName = NO;
+  BOOL shouldFetchPhoneNumbers = NO;
+  BOOL shouldFetchEmailAddresses = NO;
+  for (NSString *key in keys) {
+    if ([key isEqualToString:CNContactGivenNameKey]) {
+      shouldFetchGivenName = YES;
+      continue;
+    }
+    if ([key isEqualToString:CNContactFamilyNameKey]) {
+      shouldFetchFamilyName = YES;
+      continue;
+    }
+    if ([key isEqualToString:CNContactPhoneNumbersKey]) {
+      shouldFetchPhoneNumbers = YES;
+      continue;
+    }
+    if ([key isEqualToString:CNContactEmailAddressesKey]) {
+      shouldFetchEmailAddresses = YES;
+      continue;
+    }
+  }
+
   CNContactStore *store = [[CNContactStore alloc] init];
   CNContactFetchRequest *fetchRequest =
-      [[CNContactFetchRequest alloc] initWithKeysToFetch:@[
-        CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey,
-        CNContactEmailAddressesKey
-      ]];
+      [[CNContactFetchRequest alloc] initWithKeysToFetch:keys];
   NSError *error;
   NSMutableArray *contacts = [NSMutableArray array];
 
@@ -26,32 +48,44 @@ RCT_EXPORT_MODULE()
                                  return;
                                }
 
-                               NSMutableArray *phoneNumbers =
-                                   [NSMutableArray array];
-                               for (CNLabeledValue<CNPhoneNumber *>
-                                        *phoneNumber in contact.phoneNumbers) {
-                                 [phoneNumbers addObject:@{
-                                   @"label" : phoneNumber.label ?: @"",
-                                   @"value" : phoneNumber.value.stringValue,
-                                 }];
+                               NSMutableArray *phoneNumbers;
+                               if (shouldFetchPhoneNumbers) {
+                                 phoneNumbers = [NSMutableArray array];
+                                 for (CNLabeledValue<CNPhoneNumber *> *
+                                          phoneNumber in contact.phoneNumbers) {
+                                   [phoneNumbers addObject:@{
+                                     @"label" : phoneNumber.label ?: @"",
+                                     @"value" : phoneNumber.value.stringValue,
+                                   }];
+                                 }
                                }
 
-                               NSMutableArray *emailAddresses =
-                                   [NSMutableArray array];
-                               for (CNLabeledValue<NSString *> *emailAddress in
-                                        contact.emailAddresses) {
-
-                                 [emailAddresses addObject:@{
-                                   @"label" : emailAddress.label ?: @"",
-                                   @"value" : emailAddress.value,
-                                 }];
+                               NSMutableArray *emailAddresses;
+                               if (shouldFetchEmailAddresses) {
+                                 emailAddresses = [NSMutableArray array];
+                                 for (CNLabeledValue<NSString *>
+                                          *emailAddress in contact
+                                              .emailAddresses) {
+                                   [emailAddresses addObject:@{
+                                     @"label" : emailAddress.label ?: @"",
+                                     @"value" : emailAddress.value,
+                                   }];
+                                 }
                                }
 
                                [contacts addObject:@{
-                                 @"firstName" : contact.givenName,
-                                 @"lastName" : contact.familyName,
-                                 @"phoneNumbers" : phoneNumbers,
-                                 @"emailAddresses" : emailAddresses,
+                                 @"firstName" : shouldFetchGivenName
+                                     ? contact.givenName
+                                     : @"",
+                                 @"lastName" : shouldFetchFamilyName
+                                     ? contact.familyName
+                                     : @"",
+                                 @"phoneNumbers" : shouldFetchPhoneNumbers
+                                     ? phoneNumbers
+                                     : @[],
+                                 @"emailAddresses" : shouldFetchEmailAddresses
+                                     ? emailAddresses
+                                     : @[],
                                }];
                              }];
 

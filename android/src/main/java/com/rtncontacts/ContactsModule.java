@@ -12,6 +12,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.rtncontacts.NativeRTNContactsSpec;
@@ -36,26 +37,23 @@ public class ContactsModule extends NativeRTNContactsSpec {
   }
 
   @Override
-  public void getAll(Promise promise) {
+  public void getAll(ReadableArray keys, Promise promise) {
     WritableArray contacts = Arguments.createArray();
 
     Resources res = reactContext.getResources();
     ContentResolver cr = reactContext.getContentResolver();
-    Cursor cursor = cr.query(
-        ContactsContract.Data.CONTENT_URI,
-        new String[] {
-            ContactsContract.Data.MIMETYPE,
-            ContactsContract.Data.CONTACT_ID,
-            ContactsContract.Data.DATA1,
-            ContactsContract.Data.DATA2,
-            ContactsContract.Data.DATA3,
-        },
-        ContactsContract.Data.MIMETYPE + " IN (?, ?, ?)",
-        new String[] {
-            ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
-            ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
-            ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
-        ContactsContract.Data.CONTACT_ID + " ASC");
+    Cursor cursor = cr.query(ContactsContract.Data.CONTENT_URI,
+                             new String[] {
+                                 ContactsContract.Data.MIMETYPE,
+                                 ContactsContract.Data.CONTACT_ID,
+                                 ContactsContract.Data.DATA1,
+                                 ContactsContract.Data.DATA2,
+                                 ContactsContract.Data.DATA3,
+                             },
+                             ContactsContract.Data.MIMETYPE + " IN ("
+                                 + "?, ".repeat(keys.size() - 1) + "?)",
+                             keys.toArrayList().toArray(new String[0]),
+                             ContactsContract.Data.CONTACT_ID + " ASC");
 
     if (cursor != null) {
       long contactID = 0L;

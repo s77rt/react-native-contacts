@@ -48,7 +48,7 @@ Use `Contacts`
 ```jsx
 import Contacts from "@s77rt/react-native-contacts";
 
-Contacts.getAll()
+Contacts.getAll(["firstName", "lastName", "phoneNumbers", "emailAddresses"])
   .then((contacts) => {
     console.log(contacts);
   })
@@ -59,9 +59,9 @@ Contacts.getAll()
 
 ## Methods
 
-|   Name   | Arguments |                    Description                    |
-| :------: | :-------: | :-----------------------------------------------: |
-| `getAll` |           | Get all contacts. Returns a `Promise<Contact[]>`. |
+|   Name   |               Arguments                |                    Description                    |
+| :------: | :------------------------------------: | :-----------------------------------------------: |
+| `getAll` | `fields: NonEmptyArray<keyof Contact>` | Get all contacts. Returns a `Promise<Contact[]>`. |
 
 ## License
 
