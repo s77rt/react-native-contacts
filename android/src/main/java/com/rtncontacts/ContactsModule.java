@@ -71,10 +71,6 @@ public class ContactsModule extends NativeRTNContactsSpec {
 
         if (contact == null) {
           contact = Arguments.createMap();
-          contact.putNull("firstName");
-          contact.putNull("lastName");
-          phoneNumbers = Arguments.createArray();
-          emailAddresses = Arguments.createArray();
         }
 
         String mimeType = cursor.getString(
@@ -87,6 +83,9 @@ public class ContactsModule extends NativeRTNContactsSpec {
                                             ContactsContract.Data.DATA3)));
           break;
         case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
+          if (phoneNumbers == null) {
+            phoneNumbers = Arguments.createArray();
+          }
           int phoneType =
               cursor.getInt(cursor.getColumnIndex(ContactsContract.Data.DATA2));
           String phoneCustomLabel = cursor.getString(
@@ -101,6 +100,9 @@ public class ContactsModule extends NativeRTNContactsSpec {
           phoneNumbers.pushMap(phoneNumber);
           break;
         case ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE:
+          if (emailAddresses == null) {
+            emailAddresses = Arguments.createArray();
+          }
           int emailType =
               cursor.getInt(cursor.getColumnIndex(ContactsContract.Data.DATA2));
           String emailCustomLabel = cursor.getString(
@@ -123,10 +125,16 @@ public class ContactsModule extends NativeRTNContactsSpec {
                                      : 0L;
 
         if (nextContactID != contactID) {
-          contact.putArray("phoneNumbers", phoneNumbers);
-          contact.putArray("emailAddresses", emailAddresses);
-          contacts.pushMap(contact);
+          if (phoneNumbers != null) {
+            contact.putArray("phoneNumbers", phoneNumbers);
+            phoneNumbers = null;
+          }
+          if (emailAddresses != null) {
+            contact.putArray("emailAddresses", emailAddresses);
+            emailAddresses = null;
+          }
 
+          contacts.pushMap(contact);
           contact = null;
         }
 

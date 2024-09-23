@@ -41,52 +41,59 @@ RCT_EXPORT_MODULE()
   BOOL success = [store
       enumerateContactsWithFetchRequest:fetchRequest
                                   error:&error
-                             usingBlock:^(CNContact *__nonnull contact,
+                             usingBlock:^(CNContact *__nonnull cnContact,
                                           BOOL *__nonnull stop) {
                                if (error) {
                                  *stop = YES;
                                  return;
                                }
 
-                               NSMutableArray *phoneNumbers;
+                               NSMutableDictionary *contact =
+                                   [NSMutableDictionary dictionary];
+
+                               if (shouldFetchGivenName) {
+                                 [contact setObject:cnContact.givenName
+                                             forKey:@"firstName"];
+                               }
+
+                               if (shouldFetchFamilyName) {
+                                 [contact setObject:cnContact.familyName
+                                             forKey:@"lastName"];
+                               }
+
                                if (shouldFetchPhoneNumbers) {
-                                 phoneNumbers = [NSMutableArray array];
-                                 for (CNLabeledValue<CNPhoneNumber *> *
-                                          phoneNumber in contact.phoneNumbers) {
+                                 NSMutableArray *phoneNumbers =
+                                     [NSMutableArray array];
+                                 for (CNLabeledValue<CNPhoneNumber *>
+                                          *phoneNumber in cnContact
+                                              .phoneNumbers) {
                                    [phoneNumbers addObject:@{
-                                     @"label" : phoneNumber.label ?: @"",
+                                     @"label" : phoneNumber.label
+                                         ?: [NSNull null],
                                      @"value" : phoneNumber.value.stringValue,
                                    }];
                                  }
+                                 [contact setObject:phoneNumbers
+                                             forKey:@"phoneNumbers"];
                                }
 
-                               NSMutableArray *emailAddresses;
                                if (shouldFetchEmailAddresses) {
-                                 emailAddresses = [NSMutableArray array];
+                                 NSMutableArray *emailAddresses =
+                                     [NSMutableArray array];
                                  for (CNLabeledValue<NSString *>
-                                          *emailAddress in contact
+                                          *emailAddress in cnContact
                                               .emailAddresses) {
                                    [emailAddresses addObject:@{
-                                     @"label" : emailAddress.label ?: @"",
+                                     @"label" : emailAddress.label
+                                         ?: [NSNull null],
                                      @"value" : emailAddress.value,
                                    }];
                                  }
+                                 [contact setObject:emailAddresses
+                                             forKey:@"emailAddresses"];
                                }
 
-                               [contacts addObject:@{
-                                 @"firstName" : shouldFetchGivenName
-                                     ? contact.givenName
-                                     : @"",
-                                 @"lastName" : shouldFetchFamilyName
-                                     ? contact.familyName
-                                     : @"",
-                                 @"phoneNumbers" : shouldFetchPhoneNumbers
-                                     ? phoneNumbers
-                                     : @[],
-                                 @"emailAddresses" : shouldFetchEmailAddresses
-                                     ? emailAddresses
-                                     : @[],
-                               }];
+                               [contacts addObject:contact];
                              }];
 
   if (!success) {
