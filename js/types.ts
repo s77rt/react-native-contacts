@@ -13,4 +13,5 @@ export type Contact = {
 	lastName?: string | null;
 	phoneNumbers?: PhoneNumbers;
 	emailAddresses?: EmailAddresses;
+	thumbnail?: string | null;
 };

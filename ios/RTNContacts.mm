@@ -1,6 +1,7 @@
 #import "RTNContacts.h"
 
 #import <Contacts/Contacts.h>
+#import <React/RCTUtils.h>
 
 @implementation RTNContacts
 
@@ -13,6 +14,7 @@ RCT_EXPORT_MODULE()
   BOOL shouldFetchFamilyName = NO;
   BOOL shouldFetchPhoneNumbers = NO;
   BOOL shouldFetchEmailAddresses = NO;
+  BOOL shouldFetchThumbnailImageData = NO;
   for (NSString *key in keys) {
     if ([key isEqualToString:CNContactGivenNameKey]) {
       shouldFetchGivenName = YES;
@@ -28,6 +30,10 @@ RCT_EXPORT_MODULE()
     }
     if ([key isEqualToString:CNContactEmailAddressesKey]) {
       shouldFetchEmailAddresses = YES;
+      continue;
+    }
+    if ([key isEqualToString:CNContactThumbnailImageDataKey]) {
+      shouldFetchThumbnailImageData = YES;
       continue;
     }
   }
@@ -91,6 +97,24 @@ RCT_EXPORT_MODULE()
                                  }
                                  [contact setObject:emailAddresses
                                              forKey:@"emailAddresses"];
+                               }
+
+                               if (shouldFetchThumbnailImageData) {
+                                 if (cnContact.thumbnailImageData) {
+                                   NSString *filePath =
+                                       RCTTempFilePath(@"png", nil);
+                                   [cnContact.thumbnailImageData
+                                       writeToFile:filePath
+                                        atomically:YES];
+                                   [contact
+                                       setObject:[[NSURL
+                                                     fileURLWithPath:filePath]
+                                                     absoluteString]
+                                          forKey:@"thumbnail"];
+                                 } else {
+                                   [contact setObject:[NSNull null]
+                                               forKey:@"thumbnail"];
+                                 }
                                }
 
                                [contacts addObject:contact];

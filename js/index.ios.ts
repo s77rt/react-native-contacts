@@ -6,6 +6,7 @@ const FIELD_TO_KEY_MAP: Record<keyof Contact, string> = {
 	lastName: "familyName", // CNContactFamilyNameKey
 	phoneNumbers: "phoneNumbers", // CNContactPhoneNumbersKey
 	emailAddresses: "emailAddresses", // CNContactEmailAddressesKey
+	thumbnail: "thumbnailImageData", // CNContactThumbnailImageDataKey
 } as const;
 
 export default {

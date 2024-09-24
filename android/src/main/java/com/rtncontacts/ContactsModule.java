@@ -46,6 +46,7 @@ public class ContactsModule extends NativeRTNContactsSpec {
                              new String[] {
                                  ContactsContract.Data.MIMETYPE,
                                  ContactsContract.Data.CONTACT_ID,
+                                 ContactsContract.Data.PHOTO_THUMBNAIL_URI,
                                  ContactsContract.Data.DATA1,
                                  ContactsContract.Data.DATA2,
                                  ContactsContract.Data.DATA3,
@@ -82,6 +83,7 @@ public class ContactsModule extends NativeRTNContactsSpec {
           contact.putString("lastName", cursor.getString(cursor.getColumnIndex(
                                             ContactsContract.Data.DATA3)));
           break;
+
         case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
           if (phoneNumbers == null) {
             phoneNumbers = Arguments.createArray();
@@ -99,6 +101,7 @@ public class ContactsModule extends NativeRTNContactsSpec {
                                              ContactsContract.Data.DATA1)));
           phoneNumbers.pushMap(phoneNumber);
           break;
+
         case ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE:
           if (emailAddresses == null) {
             emailAddresses = Arguments.createArray();
@@ -116,6 +119,12 @@ public class ContactsModule extends NativeRTNContactsSpec {
               "value", cursor.getString(
                            cursor.getColumnIndex(ContactsContract.Data.DATA1)));
           emailAddresses.pushMap(emailAddress);
+          break;
+
+        case ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE:
+          contact.putString("thumbnail",
+                            cursor.getString(cursor.getColumnIndex(
+                                ContactsContract.Data.PHOTO_THUMBNAIL_URI)));
           break;
         }
 
