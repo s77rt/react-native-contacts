@@ -34,12 +34,12 @@ import { request, PERMISSIONS } from "react-native-permissions";
 
 // Android
 request(PERMISSIONS.ANDROID.READ_CONTACTS).then((result) => {
-  /* … */
+  /* Use `Contacts` module */
 });
 
 // iOS
 request(PERMISSIONS.IOS.CONTACTS).then((result) => {
-  /* … */
+  /* Use `Contacts` module */
 });
 ```
 
